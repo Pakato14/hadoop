@@ -149,7 +149,8 @@ chown -R hadoop:hadoop /home/hadoop/public
 
 /usr/sbin/sshd -D &
 
-runuser -l hadoop -c $'sed -i \'s:export JAVA_HOME=.*:export JAVA_HOME=/usr/java/jdk1.8.0_161/jre:\' /home/hadoop/hadoop/etc/hadoop/hadoop-env.sh'
+# runuser -l hadoop -c $'sed -i \'s:export JAVA_HOME=.*:export JAVA_HOME=/usr/java/jdk1.8.0_161/jre:\' /home/hadoop/hadoop/etc/hadoop/hadoop-env.sh'
+runuser -l hadoop -c $'sed -i \'s:export JAVA_HOME=.*:export JAVA_HOME=/usr/java/default:\' /home/hadoop/hadoop/etc/hadoop/hadoop-env.sh'
 
 _core_site_xml
 _hdfs_site_xml

@@ -12,7 +12,7 @@ services:
     networks:
       - hadoop
     ports:
-      - '50070:50070'
+      - '50072:50072'
     environment:
       IS_NODE_MANAGER: 'false'
       IS_NAME_NODE: 'true'

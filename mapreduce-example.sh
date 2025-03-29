@@ -22,6 +22,6 @@ docker exec namenode runuser -l hadoop -c $'cat hadoop/README.txt'
 echo 'INFO: hdfs dfs -cat /user/hadoop/output/part-r-00000'
 docker exec namenode runuser -l hadoop -c $'hdfs dfs -cat /user/hadoop/output/part-r-00000'
 
-echo 'HDFS directories at: http://localhost:50070/explorer.html#/user/hadoop'
+echo 'HDFS directories at: http://localhost:50072/explorer.html#/user/hadoop'
 
 exit 0;
