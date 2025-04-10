@@ -12,6 +12,7 @@ services:
     networks:
       - hadoop
     ports:
+      - '50070:50070'
       - '50072:50072'
     environment:
       IS_NODE_MANAGER: 'false'
@@ -34,7 +35,7 @@ services:
     networks:
       - hadoop
     ports:
-      - '8088:8088'
+      - '8088:8088'  # Interface web do ResourceManager
     environment:
       IS_NODE_MANAGER: 'false'
       IS_NAME_NODE: 'false'

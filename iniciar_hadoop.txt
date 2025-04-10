@@ -1,0 +1,13 @@
+docker build -t renci/hadoop:2.9.0 ./2.9.0/
+
+docker images
+
+docker-compose build
+
+docker-compose up -d
+
+docker-compose ps
+
+docker-compose -f 5-node-cluster.yml up -d
+
+docker-compose -f 5-node-cluster.yml up -d --remove-orphans (eliminar os orfãos)
