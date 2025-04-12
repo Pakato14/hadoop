@@ -11,3 +11,20 @@ docker-compose ps
 docker-compose -f 5-node-cluster.yml up -d
 
 docker-compose -f 5-node-cluster.yml up -d --remove-orphans (eliminar os orfãos)
+
+-- excluir containers e imagens
+docker stop $(docker ps -q)
+docker container prune -f
+
+--verificar se os arquivos foram para a imagem
+docker exec -it namenode ls /dados
+
+--Criar diretório no HDFS (se ainda não existir)
+docker exec namenode runuser -l hadoop -c $'hdfs dfs -mkdir -p /user/hadoop/csv_input'
+
+--Copiar todos os .csv do container para o HDFS
+docker exec namenode runuser -l hadoop -c $'hdfs dfs -put /dados/*.csv /user/hadoop/csv_input/'
+
+--Verificar se os arquivos foram copiados
+docker exec namenode runuser -l hadoop -c $'hdfs dfs -ls /user/hadoop/csv_input'
+
