@@ -37,14 +37,14 @@ docker exec namenode chmod +x /tmp/mapper.py /tmp/reducer.py
 
 
 docker exec namenode runuser -l hadoop -c '
-hadoop fs -rm -r -f /user/hadoop/resultado_combustivel &&
-hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
-  -input /user/hadoop/csv_input \
-  -output /user/hadoop/resultado_combustivel \
-  -mapper "/usr/bin/python3 /tmp/mapper.py" \
-  -reducer "/usr/bin/python3 /tmp/reducer.py" \
-  -file /tmp/mapper.py \
-  -file /tmp/reducer.py
+  hadoop fs -rm -r -f /user/hadoop/resultado_combustivel &&
+  hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+    -input /user/hadoop/csv_input \
+    -output /user/hadoop/resultado_combustivel \
+    -mapper /tmp/mapper.py \
+    -reducer /tmp/reducer.py \
+    -file /tmp/mapper.py \
+    -file /tmp/reducer.py
 '
 
 --remover antigo output
@@ -58,5 +58,8 @@ head -n 100 /dados/precos-diesel-gnv-01.csv | /usr/bin/python3 /tmp/mapper.py
 
 --testar o reducer
 head -n 500 /dados/precos-diesel-gnv-01.csv | python3 /tmp/mapper.py | python3 /tmp/reducer.py
+
+--Para visualizar o resultado
+docker exec namenode runuser -l hadoop -c 'hdfs dfs -cat /user/hadoop/resultado_combustivel/part-00000'
 
 

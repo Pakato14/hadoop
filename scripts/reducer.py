@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 # reducer.py
 
+import io
 import sys
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 soma = 0.0
 contador = 0
@@ -18,12 +22,20 @@ for linha in sys.stdin:
             continue
 
         produto, preco = partes
-        if produto.strip() == "DIESEL":
-            preco = preco.replace(",", ".")
-            soma += float(preco)
-            contador += 1
+        produto = produto.strip()
+        preco = preco.strip().replace(",", ".")
+
+        if produto.upper() == "DIESEL":
+            try:
+                valor = float(preco)
+                soma += valor
+                contador += 1
+            except ValueError:
+                print(f"VALOR INVÁLIDO: '{preco}' na linha: {linha}", file=sys.stderr)
+                continue
+
     except Exception as e:
-        print(f"ERRO: {str(e)} na linha: {linha}", file=sys.stderr)
+        print(f"ERRO GERAL: {str(e)} na linha: {linha}", file=sys.stderr)
         continue
 
 if contador > 0:
