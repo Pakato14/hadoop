@@ -1,3 +1,8 @@
+-- excluir containers e imagens
+docker stop $(docker ps -q)
+docker container prune -f
+
+--criando o ambiente
 docker build -t renci/hadoop:2.9.0 ./2.9.0/
 
 docker images
@@ -12,10 +17,6 @@ docker-compose -f 5-node-cluster.yml up -d
 
 docker-compose -f 5-node-cluster.yml up -d --remove-orphans (eliminar os orfãos)
 
--- excluir containers e imagens
-docker stop $(docker ps -q)
-docker container prune -f
-
 --verificar se os arquivos foram para a imagem
 docker exec -it namenode ls /dados
 
@@ -27,4 +28,35 @@ docker exec namenode runuser -l hadoop -c $'hdfs dfs -put /dados/*.csv /user/had
 
 --Verificar se os arquivos foram copiados
 docker exec namenode runuser -l hadoop -c $'hdfs dfs -ls /user/hadoop/csv_input'
+
+--enviar scripts para o docker
+docker cp scripts/mapper.py namenode:/tmp/mapper.py
+docker cp scripts/reducer.py namenode:/tmp/reducer.py
+--permissao
+docker exec namenode chmod +x /tmp/mapper.py /tmp/reducer.py
+
+
+docker exec namenode runuser -l hadoop -c '
+hadoop fs -rm -r -f /user/hadoop/resultado_combustivel &&
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+  -input /user/hadoop/csv_input \
+  -output /user/hadoop/resultado_combustivel \
+  -mapper "/usr/bin/python3 /tmp/mapper.py" \
+  -reducer "/usr/bin/python3 /tmp/reducer.py" \
+  -file /tmp/mapper.py \
+  -file /tmp/reducer.py
+'
+
+--remover antigo output
+docker exec namenode runuser -l hadoop -c 'hdfs dfs -rm -r /user/hadoop/resultado_combustivel'
+
+--comando para entrar no docker namenode
+docker exec -it namenode bash
+
+--testar o mapper
+head -n 100 /dados/precos-diesel-gnv-01.csv | /usr/bin/python3 /tmp/mapper.py
+
+--testar o reducer
+head -n 500 /dados/precos-diesel-gnv-01.csv | python3 /tmp/mapper.py | python3 /tmp/reducer.py
+
 
