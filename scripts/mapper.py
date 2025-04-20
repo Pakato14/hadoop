@@ -1,16 +1,28 @@
 #!/usr/bin/env python3
+# mapper.py
+
 import sys
 import csv
 
-reader = csv.reader(sys.stdin, delimiter=';')
-for row in reader:
+for linha in sys.stdin:
     try:
-        if row[0].strip() == "Regiao - Sigla" or row[1].strip() != "SP":
+        linha = linha.strip()
+        if not linha:
             continue
-        produto = row[10].strip().upper()
-        if "DIESEL" in produto:
-            preco = row[12].replace(",", ".").strip()
-            if preco:
-                print(f"{produto}\t{preco}")
-    except Exception:
-        continue
+
+        # Força leitura como CSV com ; e ignora erros
+        reader = csv.reader([linha], delimiter=';')
+        cols = next(reader)
+
+        if len(cols) < 14:
+            continue
+
+        estado = cols[1].strip()
+        produto = cols[10].strip().upper()
+        preco = cols[12].replace(',', '.').strip()
+
+        if estado == "SP" and produto.startswith("DIESEL") and preco:
+            print(f"{produto}\t{preco}")
+
+    except Exception as e:
+        print(f"ERRO: {str(e)} na linha: {linha}", file=sys.stderr)
