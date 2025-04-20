@@ -47,20 +47,12 @@ hadoop   /usr/local/bin/tini -- /do ...   Up      22/tcp, 0.0.0.0:50070->50070/t
 
 	```
 	ports:
-	  - '8042:8042'    # NodeManager web ui
-	  - '8088:8088'    # ResourceManager web ui
-	  - '50070:50070'  # NameNode web ui 
-	  - '50075:50075'  # DataNode web ui
-	  - '50090:50090'  # Secondary NameNode web ui
+	  - '18042:8042'    # NodeManager web ui
+	  - '18088:8088'    # ResourceManager web ui
+	  - '150070:50070'  # NameNode web ui 
+	  - '150075:50075'  # DataNode web ui
+	  - '150090:50090'  # Secondary NameNode web ui
 	```
-
-### From Docker Hub
-
-Automated builds are generated at: [https://hub.docker.com/u/renci](https://hub.docker.com/u/renci/dashboard/) and can be pulled as follows.
-
-```
-$ docker pull renci/hadoop:2.9.0
-```
 
 ## Example: Five node cluster
 
@@ -84,12 +76,14 @@ services:
     volumes:
       - hadoop-public:/home/hadoop/public
       - ./site-files:/site-files
+      - ./dados_combustiveis:/dados
     restart: always
     hostname: namenode
     networks:
       - hadoop
     ports:
       - '50070:50070'
+      - '50072:50072'
     environment:
       IS_NODE_MANAGER: 'false'
       IS_NAME_NODE: 'true'
@@ -111,7 +105,7 @@ services:
     networks:
       - hadoop
     ports:
-      - '8088:8088'
+      - '8088:8088'  # Interface web do ResourceManager
     environment:
       IS_NODE_MANAGER: 'false'
       IS_NAME_NODE: 'false'
@@ -201,7 +195,7 @@ networks:
 Using `docker-compose`
 
 ```
-$ docker-compose -f 5-node-cluster.yml up -d
+$ docker-compose -f 5-node-cluster.yml up -d --remove-orphans
 ```
 
 After a few moments all containers will be running and should display in a `ps` call.
